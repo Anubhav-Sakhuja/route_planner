@@ -25,7 +25,8 @@ int index;
 List<List<int>> links = [];
 
 List<List<dynamic>> LinksAndWeights =[];
-List<List<dynamic>> destAndWeights = [];
+List<dynamic> routeList = [];
+
 
 class _HomeState extends State<Home> {
   ImageProvider mapImage;
@@ -186,31 +187,14 @@ getImage();
                   width: size.width / 3.5,
                   child: RaisedButton(
                     onPressed: () {
-                      destAndWeights = [];
-                     List<int> unvisitedNodes  = [];
+                          dijkstra dj = dijkstra(links: LinksAndWeights,nodes: nodesList.length,startNode:destNodes[0]);
 
-                        for (int i in destNodes){
-                          unvisitedNodes.add(i);
-                        }
-                        while(unvisitedNodes.length!=0){
-                          dijkstra dj = dijkstra(links: LinksAndWeights,nodes: nodesList.length,startNode: unvisitedNodes.last);
-                          unvisitedNodes.removeLast();
                           dj.generateTable();
-                          for(int i in unvisitedNodes){
-                             dj.calculateShortestDistance(i)
-                             ;
-                          }
-                        }
+                          setState(() {
+                            routeList = dj.calculateShortestDistance(destNodes[1]);
+                          });
 
-
-
-                     print(destAndWeights);
-
-                      dijkstra dj2 = dijkstra(links: destAndWeights,nodes: destNodes.length,startNode: 0);
-                      dj2.generateTable();
-
-
-                    },
+                          },
                     color: Colors.grey,
                     child: Text(
                       "Find",
@@ -260,36 +244,6 @@ getImage();
     );
   }
 
- List<dynamic> CompatibleTheListWithDijkstra(List<dynamic> list){
-
-      for(int j =0 ; j<destNodes.length;j++){
-        if(list[0]==destNodes[j]){
-          list[0]=j;
-
-        }
-        if(list[list.length-2]==destNodes[j]){
-          list[list.length-2]=j;
-        }
-      }
-
-    return list;
- }
-
- List<dynamic> getListBackToNormal(List<dynamic> list){
-
-   for(int j =0 ; j<destNodes.length;j++){
-     if(list[0]==j){
-       list[0]=destNodes[j];
-
-       break;
-     }
-     if(list[list.length-2]==j){
-       list[list.length-2]=destNodes[j];
-       break;
-     }
-   }
-    return list;
- }
 
 
   int detectNode() {
@@ -345,6 +299,10 @@ class NLDpainter extends CustomPainter {
     var _paintDest = new Paint();
     _paintDest.color = Colors.blueAccent;
     _paintDest.style = PaintingStyle.fill;
+    var _paintRoute = new Paint();
+    _paintRoute.color = Colors.black87;
+    _paintRoute.style = PaintingStyle.stroke;
+    _paintRoute.strokeWidth = 5;
 
 
 
@@ -386,6 +344,14 @@ class NLDpainter extends CustomPainter {
         canvas.drawCircle(
             Offset(nodesList[index][0], nodesList[index][1]), 10, _activeNode);
       }
+    }
+    if(routeList!=[]){
+      for(int i =0 ; i<routeList.length-1;i++){
+        canvas.drawCircle(
+            Offset(nodesList[routeList[i]][0], nodesList[routeList[i]][1]), 10, _paintDest);
+
+      }
+
     }
   }
 
