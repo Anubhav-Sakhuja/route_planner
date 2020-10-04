@@ -166,6 +166,7 @@ getImage();
                     padding: EdgeInsets.all(0),
                     onPressed: () {
                       setState(() {
+                        routeList = destNodes=[];
                         twoNodes = [];
                         posx = posy = 0;
                         mode = 3;
@@ -331,7 +332,7 @@ class NLDpainter extends CustomPainter {
         }
       }
 // destinations !!
-      if (destNodes != null) {
+      if (destNodes != []) {
         for (int a in destNodes) {
           canvas.drawCircle(Offset(nodesList[a][0], nodesList[a][1]), 10, _paintDest);
         }
